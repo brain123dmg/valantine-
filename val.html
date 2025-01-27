@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine</title>
+    <style>
+        /* Fun little fade-in animation */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Just making things float up and down for fun */
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Pink is cute, right? */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            animation: fadeIn 1s ease-in-out;
+            background-color: pink;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden; /* So nothing overflows! */
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff477e; /* Some nice pink shade */
+            color: white;
+        }
+
+        button:hover {
+            background-color: #ff0a54; /* Darker pink when hovered */
+        }
+
+        #confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none; /* Hidden until needed */
+        }
+
+        /* Scatter the love notes everywhere! */
+        .love-notes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .note {
+            position: absolute;
+            animation: float 3s infinite ease-in-out;
+            font-family: "Cursive", sans-serif;
+            font-size: 1.2rem;
+            color: #ff477e; /* Pretty pink for the notes */
+            opacity: 0.8; /* Slight transparency */
+        }
+
+        .note:nth-child(odd) {
+            animation-duration: 4s; /* Different speeds for fun */
+        }
+
+        .note:nth-child(even) {
+            animation-duration: 5s;
+        }
+    </style>
+</head>
+<body>
+    <!-- The main question area -->
+    <div class="container">
+        <h1>Will you be my Valentine?</h1>
+        <button onclick="showConfetti()">Yes</button>
+        <button onclick="tryAgain()">No</button>
+    </div>
+
+    <canvas id="confetti"></canvas>
+
+    <!-- Scatter cute love notes everywhere! -->
+    <div class="love-notes">
+        <div class="note" style="top: 10%; left: 5%;">I love you 💘 Terd⊙⊙❤️</div>
+        <div class="note" style="top: 20%; left: 75%;">Be mine forever ❤️</div>
+        <div class="note" style="top: 35%; left: 10%;">You’re my everything 💕</div>
+        <div class="note" style="top: 60%; left: 80%;">Hugs & kisses 😘</div>
+        <div class="note" style="top: 75%; left: 15%;">My heart is yours 💓</div>
+        <div class="note" style="top: 85%; left: 70%;">Love you to the moon 🌙</div>
+        <div class="note" style="top: 5%; left: 50%;">You are my sunshine ☀️</div>
+        <div class="note" style="top: 30%; left: 20%;">Forever yours 💞</div>
+        <div class="note" style="top: 45%; left: 85%;">You complete me 💗</div>
+        <div class="note" style="top: 65%; left: 40%;">Sweetheart 💟</div>
+        <div class="note" style="top: 80%; left: 5%;">Always & forever 💘</div>
+        <div class="note" style="top: 15%; left: 90%;">My one & only 💕</div>
+    </div>
+
+    <script>
+        // Make confetti happen when "Yes" is clicked!
+        function showConfetti() {
+            const confetti = document.getElementById('confetti');
+            confetti.style.display = 'block';
+            const context = confetti.getContext('2d');
+            const confettiCount = 300; // So many confetti!
+            const confettiColors = ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd', '#f9bec7'];
+            const confettiArray = [];
+
+            confetti.width = window.innerWidth;
+            confetti.height = window.innerHeight;
+
+            // Create all the confetti
+            for (let i = 0; i < confettiCount; i++) {
+                confettiArray.push({
+                    x: Math.random() * confetti.width,
+                    y: Math.random() * confetti.height - confetti.height,
+                    r: Math.random() * 6 + 2,
+                    d: Math.random() * confettiCount,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                    tilt: Math.random() * 10 - 10,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+                    tiltAngle: 0
+                });
+            }
+
+            // Draw all the confetti
+            function drawConfetti() {
+                context.clearRect(0, 0, confetti.width, confetti.height);
+                confettiArray.forEach((confetti, index) => {
+                    context.beginPath();
+                    context.lineWidth = confetti.r;
+                    context.strokeStyle = confetti.color;
+                    context.moveTo(confetti.x + confetti.tilt + confetti.r / 2, confetti.y);
+                    context.lineTo(confetti.x + confetti.tilt, confetti.y + confetti.tilt + confetti.r / 2);
+                    context.stroke();
+                });
+                updateConfetti();
+            }
+
+            // Update confetti positions
+            function updateConfetti() {
+                confettiArray.forEach((confetti, index) => {
+                    confetti.tiltAngle += confetti.tiltAngleIncremental;
+                    confetti.y += (Math.cos(confetti.d) + 3 + confetti.r / 2) / 2;
+                    confetti.tilt = Math.sin(confetti.tiltAngle - index / 3) * 15;
+
+                    if (confetti.y > confetti.height) {
+                        confetti.x = Math.random() * confetti.width;
+                        confetti.y = -10;
+                    }
+                });
+            }
+
+            // Keep the confetti flowing
+            (function animateConfetti() {
+                drawConfetti();
+                requestAnimationFrame(animateConfetti);
+            })();
+        }
+
+        // If "No" is clicked
+        function tryAgain() {
+            alert('Try again!');
+        }
+    </script>
+</body>
+</html>
